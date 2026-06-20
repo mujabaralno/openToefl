@@ -4,18 +4,22 @@ import { z } from "zod"
 // Session form schema (admin create/edit)
 //
 // Dates come from <input type="datetime-local"> as "YYYY-MM-DDTHH:mm" strings.
-// We keep them as strings in the form and convert to ISO in the server action,
-// so the schema validates the local-datetime shape and the start < end rule.
+// The CLIENT converts them to an absolute UTC ISO string before submit (so the
+// naive wall-clock time is anchored to the admin's timezone, not the server's —
+// see localInputToIso). This field therefore accepts BOTH shapes: the raw
+// datetime-local value (validated live in the form) and the converted ISO value
+// (validated again in the server action). Date.parse handles both.
 // Types are derived from this schema in types/session.ts (no duplication).
 // ---------------------------------------------------------------------------
-
-const LOCAL_DATETIME_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/
 
 const localDateTime = z
   .string()
   .trim()
   .min(1, "Tanggal wajib diisi")
-  .regex(LOCAL_DATETIME_RE, "Format tanggal tidak valid")
+  .refine(
+    (value) => !Number.isNaN(Date.parse(value)),
+    "Format tanggal tidak valid"
+  )
 
 export const sessionFormSchema = z
   .object({

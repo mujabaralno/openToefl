@@ -48,6 +48,20 @@ export function isoToLocalInput(value: string): string {
   return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16)
 }
 
+/**
+ * Convert a datetime-local input value ("YYYY-MM-DDTHH:mm", naive local time)
+ * into an absolute UTC ISO string.
+ *
+ * MUST run in the browser: a naive datetime string is interpreted in the
+ * runtime's timezone, so anchoring it on the client pins the wall-clock time to
+ * the admin's timezone (not the server's, which is typically UTC on Vercel).
+ * An already-ISO value passes through unchanged (new Date on an ISO string with
+ * an offset is timezone-independent).
+ */
+export function localInputToIso(value: string): string {
+  return new Date(value).toISOString()
+}
+
 /** Blank form values for a fresh session (defaults to active). */
 export function emptySessionForm(): SessionFormData {
   return {

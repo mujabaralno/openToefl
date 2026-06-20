@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { sessionFormSchema } from "@/lib/validations/session"
+import { localInputToIso } from "@/lib/sessions"
 import {
   createSessionAction,
   updateSessionAction,
@@ -50,12 +51,21 @@ export function SessionForm({
   })
 
   function onSubmit(values: SessionFormData) {
+    // Anchor the naive datetime-local values to the admin's timezone here (in
+    // the browser) before sending — the server runs in UTC and would otherwise
+    // misinterpret them, shifting the displayed times.
+    const payload: SessionFormData = {
+      ...values,
+      start_date: localInputToIso(values.start_date),
+      end_date: localInputToIso(values.end_date),
+    }
+
     startTransition(async () => {
       try {
         const result =
           mode === "edit" && sessionId
-            ? await updateSessionAction(sessionId, values)
-            : await createSessionAction(values)
+            ? await updateSessionAction(sessionId, payload)
+            : await createSessionAction(payload)
 
         if (result.success) {
           toast.success(result.message)
