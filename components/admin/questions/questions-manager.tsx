@@ -1,9 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { Plus } from "lucide-react"
+import { FileUp, Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { ImportQuestionsDialog } from "@/components/admin/questions/import-questions-dialog"
 import {
   QuestionFilters,
   type DifficultyFilter,
@@ -32,6 +33,7 @@ export function QuestionsManager({ questions, passages, listeningGroups }: Quest
   const [page, setPage] = React.useState(1)
 
   const [formOpen, setFormOpen] = React.useState(false)
+  const [importOpen, setImportOpen] = React.useState(false)
   const [editing, setEditing] = React.useState<QuestionRow | null>(null)
   const [deleteTarget, setDeleteTarget] = React.useState<QuestionRow | null>(null)
   const [previewTarget, setPreviewTarget] = React.useState<QuestionRow | null>(null)
@@ -97,10 +99,16 @@ export function QuestionsManager({ questions, passages, listeningGroups }: Quest
             onDifficultyChange={changeDifficulty}
             onSearchChange={changeSearch}
           />
-          <Button onClick={openCreate} className="shrink-0">
-            <Plus />
-            Tambah Soal
-          </Button>
+          <div className="flex shrink-0 gap-2">
+            <Button variant="outline" onClick={() => setImportOpen(true)}>
+              <FileUp />
+              Import Excel
+            </Button>
+            <Button onClick={openCreate}>
+              <Plus />
+              Tambah Soal
+            </Button>
+          </div>
         </div>
 
         <QuestionTable
@@ -131,6 +139,8 @@ export function QuestionsManager({ questions, passages, listeningGroups }: Quest
         passages={passages}
         listeningGroups={listeningGroups}
       />
+
+      <ImportQuestionsDialog open={importOpen} onOpenChange={setImportOpen} />
 
       <DeleteQuestionDialog
         question={deleteTarget}

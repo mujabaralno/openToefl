@@ -105,6 +105,7 @@ export async function updateSession(request: NextRequest) {
     "/simulation",
     "/practice",
     "/history",
+    "/sessions",
     "/leaderboard",
     "/settings",
   ]

@@ -12,6 +12,7 @@ export const studentNavItems: NavItem[] = [
   { title: "Simulasi", href: "/simulation", icon: "simulasi" },
   { title: "Latihan", href: "/practice", icon: "latihan" },
   { title: "Riwayat", href: "/history", icon: "riwayat" },
+  { title: "Sesi", href: "/sessions", icon: "sesi" },
   { title: "Leaderboard", href: "/leaderboard", icon: "leaderboard" },
   { title: "Settings", href: "/settings", icon: "settings" },
 ]
@@ -20,6 +21,6 @@ export const adminNavItems: NavItem[] = [
   { title: "Dashboard", href: "/admin/dashboard", icon: "dashboard" },
   { title: "Soal", href: "/admin/questions", icon: "soal" },
   { title: "Passage", href: "/admin/passages", icon: "passage" },
-  { title: "Sesi", href: "/admin/sesi", icon: "sesi" },
+  { title: "Sesi", href: "/admin/sessions", icon: "sesi" },
   { title: "Pengguna", href: "/admin/users", icon: "pengguna" },
 ]

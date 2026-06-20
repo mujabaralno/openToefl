@@ -70,6 +70,98 @@ export interface Database {
         }
         Relationships: []
       }
+      sessions: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          program_study: string | null
+          faculty: string | null
+          invite_code: string
+          start_date: string
+          end_date: string
+          max_participants: number | null
+          is_active: boolean
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          program_study?: string | null
+          faculty?: string | null
+          invite_code: string
+          start_date: string
+          end_date: string
+          max_participants?: number | null
+          is_active?: boolean
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          program_study?: string | null
+          faculty?: string | null
+          invite_code?: string
+          start_date?: string
+          end_date?: string
+          max_participants?: number | null
+          is_active?: boolean
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_participants: {
+        Row: {
+          id: string
+          session_id: string
+          user_id: string
+          joined_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          user_id: string
+          joined_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          user_id?: string
+          joined_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_participants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       passages: {
         Row: {
           id: string
@@ -524,6 +616,13 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_attempts_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
             referencedColumns: ["id"]
           },
         ]

@@ -14,10 +14,28 @@ import type {
   PASSAGE_MODES,
   LISTENING_PARTS,
 } from "@/lib/validations/question"
+import type { questionImportRowSchema } from "@/lib/validations/question-import"
 import type { Tables } from "@/types/database.types"
 
 /** Shape submitted by the create/edit form. */
 export type QuestionFormData = z.infer<typeof questionFormSchema>
+
+/** One validated row from the bulk-import spreadsheet. */
+export type QuestionImportRow = z.infer<typeof questionImportRowSchema>
+
+/** Per-row error from a bulk import (1-based spreadsheet row number). */
+export interface ImportRowError {
+  row: number
+  messages: string[]
+}
+
+/** Outcome of a bulk import run, surfaced to the admin as a report. */
+export interface ImportReport {
+  total: number
+  inserted: number
+  failed: number
+  errors: ImportRowError[]
+}
 
 export type QuestionSection = (typeof QUESTION_SECTIONS)[number]
 export type Difficulty = (typeof DIFFICULTIES)[number]
