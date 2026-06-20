@@ -13,7 +13,7 @@ export default async function AdminSessionsPage() {
   const sessions = await getAllSessions()
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-7">
       <PageHeader
         eyebrow="Admin"
         title="Manajemen Sesi"
