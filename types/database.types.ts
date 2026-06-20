@@ -70,6 +70,38 @@ export interface Database {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          id: string
+          maintenance_mode: boolean
+          maintenance_message: string | null
+          updated_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          maintenance_mode?: boolean
+          maintenance_message?: string | null
+          updated_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          maintenance_mode?: boolean
+          maintenance_message?: string | null
+          updated_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sessions: {
         Row: {
           id: string

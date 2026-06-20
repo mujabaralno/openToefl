@@ -398,6 +398,31 @@ Supabase Dashboard → Table Editor → tabel `users` → edit kolom `role` → 
 
 ---
 
+## Maintenance Mode
+
+Admin bisa mengaktifkan **Maintenance Mode** dari **`/admin/settings`** (Switch
++ pesan opsional). Saat aktif, semua pengunjung non-admin diarahkan ke
+`/maintenance`, sementara admin tetap bisa mengakses `/admin/*` dan `/login`.
+
+### Mematikan secara darurat (jalur cadangan)
+
+Kalau halaman `/admin/settings` sendiri tidak bisa diakses (mis. salah konfigurasi
+atau admin terkunci di luar), matikan maintenance mode langsung dari database:
+
+1. Supabase Dashboard → **Table Editor** → tabel **`app_settings`**
+2. Pada satu-satunya baris, ubah kolom **`maintenance_mode`** menjadi **`false`** → Save
+
+Atau lewat **SQL Editor**:
+
+```sql
+UPDATE public.app_settings SET maintenance_mode = false;
+```
+
+> Perubahan berlaku dalam ~10 detik (middleware membaca setting dari cache
+> singkat). Tunggu sebentar lalu refresh.
+
+---
+
 ## Manual Test Checklist
 
 Setelah setup production, verifikasi poin-poin berikut:
@@ -422,6 +447,9 @@ Setelah setup production, verifikasi poin-poin berikut:
 - [ ] Student join sesi via kode → muncul di daftar peserta admin
 - [ ] Export hasil sesi → file `.xlsx` berisi nama, NIM, skor
 - [ ] Nonaktifkan/aktifkan akun student
+- [ ] `/admin/settings` → aktifkan Maintenance Mode (muncul AlertDialog konfirmasi)
+- [ ] Saat maintenance ON: student diarahkan ke `/maintenance`, admin tetap bisa buka `/admin/*`
+- [ ] Matikan Maintenance Mode → student bisa akses dashboard lagi (±10 detik)
 
 ### Student
 - [ ] Join sesi via kode → tampil di halaman `/sessions`

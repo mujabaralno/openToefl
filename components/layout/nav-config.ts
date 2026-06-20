@@ -23,4 +23,5 @@ export const adminNavItems: NavItem[] = [
   { title: "Passage", href: "/admin/passages", icon: "passage" },
   { title: "Sesi", href: "/admin/sessions", icon: "sesi" },
   { title: "Pengguna", href: "/admin/users", icon: "pengguna" },
+  { title: "Pengaturan", href: "/admin/settings", icon: "settings" },
 ]

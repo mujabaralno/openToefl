@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr"
 import { type NextRequest, NextResponse } from "next/server"
 import { type Database } from "@/types/database.types"
 import { isLockActive } from "@/lib/auth/lock"
+import { getAppSettings } from "@/lib/get-app-settings"
 
 /**
  * Refreshes the Supabase auth session on every request and enforces
@@ -13,6 +14,8 @@ import { isLockActive } from "@/lib/auth/lock"
  *     student-only areas — each is redirected to their own dashboard
  *  4. Locked accounts (is_locked = true, locked_until still in the future)
  *     are funnelled to /account-locked
+ *  5. Maintenance mode (app_settings.maintenance_mode) → non-admin traffic is
+ *     redirected to /maintenance; /admin and /login stay reachable.
  *
  * IMPORTANT: do NOT use supabase.auth.getSession() here. getUser() validates
  * the token against the Auth server; getSession() only reads cookies.
@@ -41,10 +44,6 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
   const { pathname } = request.nextUrl
 
   const redirectTo = (path: string) => {
@@ -60,6 +59,32 @@ export async function updateSession(request: NextRequest) {
   const isAuthFlowRoute =
     pathname.startsWith("/auth") || pathname === "/reset-password"
   if (isAuthFlowRoute) return supabaseResponse
+
+  // ----- Maintenance gate -----
+  // Runs BEFORE the user lookup so non-admin traffic is parked at /maintenance,
+  // while /admin and /login fall through to the normal auth flow below — an
+  // unauthenticated admin is still sent to /login first, not /maintenance.
+  // Static assets (_next/*, favicon, images) are already excluded by the matcher.
+  const { maintenanceMode } = await getAppSettings()
+  if (maintenanceMode) {
+    // The maintenance page itself renders for everyone while mode is on.
+    if (pathname === "/maintenance") return supabaseResponse
+
+    const maintenanceBypass =
+      pathname.startsWith("/admin") ||
+      pathname.startsWith("/api") ||
+      pathname === "/login" ||
+      pathname.startsWith("/login/")
+    if (!maintenanceBypass) return redirectTo("/maintenance")
+  } else if (pathname === "/maintenance") {
+    // Mode off → the maintenance page isn't reachable; send visitors home.
+    return redirectTo("/")
+  }
+
+  // ----- Authenticated user lookup -----
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   // Public routes: reachable without a session. Logged-in users get bounced
   // to their dashboard instead.
