@@ -19,14 +19,9 @@ interface SidebarContentProps {
  * Rendered both in the fixed desktop aside and inside the mobile Sheet, so it
  * carries no layout chrome of its own beyond internal spacing.
  */
-export function SidebarContent({
-  items,
-  homeHref,
-  panelLabel,
-  onNavigate,
-}: SidebarContentProps) {
+export function SidebarContent({ items, homeHref, panelLabel, onNavigate }: SidebarContentProps) {
   return (
-    <div className="flex h-full flex-col gap-6 px-4 py-6">
+    <div className="flex h-full flex-col bg-sidebar gap-6 px-4 py-6">
       <Link
         href={homeHref}
         onClick={onNavigate}
@@ -37,7 +32,7 @@ export function SidebarContent({
         </span>
         <span className="flex flex-col leading-none">
           <span className="text-base font-semibold tracking-tight text-sidebar-foreground">
-            PTESOL
+            Open TOEFL
           </span>
           <span className="mt-1 font-mono text-[10px] tracking-[0.2em] text-sidebar-foreground/45 uppercase">
             TOEFL ITP

@@ -18,26 +18,14 @@ interface AppNavbarProps {
  * compact wordmark on small screens (the sidebar owns the brand on desktop),
  * with the user menu pinned to the right.
  */
-export function AppNavbar({
-  user,
-  items,
-  homeHref,
-  panelLabel,
-}: AppNavbarProps) {
+export function AppNavbar({ user, items, homeHref, panelLabel }: AppNavbarProps) {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/80 sm:px-6 lg:px-8">
-      <MobileSidebar
-        items={items}
-        homeHref={homeHref}
-        panelLabel={panelLabel}
-      />
-      <Link
-        href={homeHref}
-        className="font-semibold tracking-tight lg:hidden"
-      >
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border bg-sidebar px-4 backdrop-blur supports-backdrop-filter:bg-sidebar sm:px-6 lg:px-8">
+      <MobileSidebar items={items} homeHref={homeHref} panelLabel={panelLabel} />
+      <Link href={homeHref} className="font-semibold tracking-tight lg:hidden">
         PTESOL
       </Link>
-      <div className="ml-auto flex items-center gap-1 sm:gap-2">
+      <div className="ml-auto flex  items-center gap-1 sm:gap-2">
         <NotificationBell userId={user.id} />
         <UserMenu user={user} />
       </div>

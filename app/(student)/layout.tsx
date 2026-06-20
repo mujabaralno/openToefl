@@ -9,9 +9,7 @@ import { type NavUser } from "@/types/layout"
 const HOME_HREF = "/dashboard"
 const PANEL_LABEL = "Panel Mahasiswa"
 
-export default async function StudentLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default async function StudentLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const supabase = await createClient()
 
   const {
@@ -43,11 +41,7 @@ export default async function StudentLayout({
     <div className="flex min-h-svh bg-background">
       <aside className="hidden w-64 shrink-0 border-r border-sidebar-border bg-sidebar lg:block">
         <div className="sticky top-0 h-svh overflow-y-auto">
-          <SidebarContent
-            items={studentNavItems}
-            homeHref={HOME_HREF}
-            panelLabel={PANEL_LABEL}
-          />
+          <SidebarContent items={studentNavItems} homeHref={HOME_HREF} panelLabel={PANEL_LABEL} />
         </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
