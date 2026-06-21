@@ -3,7 +3,10 @@
   Paste isi file ini ke: Supabase Dashboard → Authentication → Email Templates
   → pilih "Confirm signup" → tab Source/HTML.
   Subject yang disarankan: Konfirmasi akun PTESOL Anda
-  Variabel Supabase yang dipakai: {{ .ConfirmationURL }}
+  Variabel Supabase yang dipakai: {{ .SiteURL }} + {{ .TokenHash }}
+  Link mengarah ke route /auth/confirm (flow token_hash), lalu ke /dashboard.
+  Pastikan Site URL di Supabase benar. Catatan: jika konfirmasi gagal
+  ("invalid token"), ganti type=signup menjadi type=email.
 -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f4f6;margin:0;padding:40px 16px;">
   <tr>
@@ -48,7 +51,7 @@
             <table role="presentation" cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td align="center" bgcolor="#4b56d2" style="border-radius:9px;">
-                  <a href="{{ .ConfirmationURL }}" target="_blank"
+                  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=/dashboard" target="_blank"
                      style="display:inline-block;padding:13px 28px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:9px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
                     Konfirmasi Email
                   </a>
@@ -65,7 +68,7 @@
               Tombol tidak berfungsi? Salin dan tempel tautan ini ke browser Anda:
             </p>
             <p style="margin:0;font-size:12px;line-height:1.5;word-break:break-all;">
-              <a href="{{ .ConfirmationURL }}" target="_blank" style="color:#4b56d2;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+              <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=/dashboard" target="_blank" style="color:#4b56d2;text-decoration:underline;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup</a>
             </p>
           </td>
         </tr>
