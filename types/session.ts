@@ -9,7 +9,7 @@ import type {
   sessionFormSchema,
   joinSessionSchema,
 } from "@/lib/validations/session"
-import type { Tables } from "@/types/database.types"
+import type { Enums, Tables } from "@/types/database.types"
 import type { ActionResult } from "@/types/auth"
 
 export type SessionRow = Tables<"sessions">
@@ -27,9 +27,17 @@ export interface SessionWithStats extends SessionRow {
   completedCount: number
 }
 
-/** A session a student has joined, plus their own best result (if any). */
+/** The student's own attempt within a specific session (if any). */
+export interface SessionAttempt {
+  id: string
+  status: Enums<"test_status">
+  currentSection: Enums<"question_section"> | null
+  totalScore: number | null
+}
+
+/** A session a student has joined, plus their own attempt for it (if any). */
 export interface JoinedSession extends SessionRow {
-  bestTotalScore: number | null
+  attempt: SessionAttempt | null
 }
 
 /** One participant's results within a session (best completed attempt). */

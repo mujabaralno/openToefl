@@ -114,7 +114,9 @@ async function finalizeScore(
  * Create a fresh in-progress attempt and start the listening section clock.
  * Returns the new attempt id so the client can route into the first section.
  */
-export async function startSimulationAction(): Promise<StartSimulationResult> {
+export async function startSimulationAction(
+  sessionId?: string
+): Promise<StartSimulationResult> {
   const supabase = await createClient()
   const {
     data: { user },
@@ -123,11 +125,54 @@ export async function startSimulationAction(): Promise<StartSimulationResult> {
     return { success: false, message: "Sesi berakhir. Silakan masuk kembali." }
   }
 
+  // Session-linked start: enforce membership + time window + one attempt/session.
+  if (sessionId) {
+    // RLS (sessions_select_participant) only returns sessions the student has
+    // joined, so an unreadable row means "not a participant".
+    const { data: session } = await supabase
+      .from("sessions")
+      .select("is_active, start_date, end_date")
+      .eq("id", sessionId)
+      .maybeSingle()
+    if (!session) {
+      return { success: false, message: "Sesi tidak ditemukan atau Anda belum bergabung." }
+    }
+
+    const nowMs = Date.now()
+    if (
+      !session.is_active ||
+      nowMs < new Date(session.start_date).getTime() ||
+      nowMs > new Date(session.end_date).getTime()
+    ) {
+      return { success: false, message: "Sesi tidak sedang berlangsung." }
+    }
+
+    // One attempt per session: resume an in-progress one, block a finished one.
+    const { data: existing } = await supabase
+      .from("test_attempts")
+      .select("id, status")
+      .eq("user_id", user.id)
+      .eq("session_id", sessionId)
+      .order("started_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (existing) {
+      if (existing.status === "in_progress") {
+        return { success: true, attemptId: existing.id }
+      }
+      return {
+        success: false,
+        message: "Anda sudah mengikuti simulasi untuk sesi ini.",
+      }
+    }
+  }
+
   const now = new Date().toISOString()
   const { data, error } = await supabase
     .from("test_attempts")
     .insert({
       user_id: user.id,
+      session_id: sessionId ?? null,
       status: "in_progress",
       current_section: "listening",
       listening_started_at: now,

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server"
 import {
   type JoinedSession,
   type ParticipantResult,
+  type SessionAttempt,
   type SessionRow,
   type SessionWithStats,
 } from "@/types/session"
@@ -10,9 +11,8 @@ import {
  * All sessions (admin), newest first, each with participant + "sudah test"
  * counts. RLS lets admins read every session; a non-admin caller gets nothing.
  *
- * "Sudah test" = participant whose account has at least one completed
- * simulation. Attempts aren't strictly session-scoped yet, so this is a
- * pragmatic proxy (see also getSessionParticipants).
+ * "Sudah test" = participant who completed the simulation FOR THIS SESSION
+ * (an attempt tagged with this session_id), not just any simulation.
  */
 export async function getAllSessions(): Promise<SessionWithStats[]> {
   const supabase = await createClient()
@@ -21,18 +21,27 @@ export async function getAllSessions(): Promise<SessionWithStats[]> {
     await Promise.all([
       supabase.from("sessions").select("*").order("created_at", { ascending: false }),
       supabase.from("session_participants").select("session_id, user_id"),
-      supabase.from("test_attempts").select("user_id").eq("status", "completed"),
+      supabase
+        .from("test_attempts")
+        .select("user_id, session_id")
+        .eq("status", "completed")
+        .not("session_id", "is", null),
     ])
 
   if (error) throw new Error(error.message)
 
-  const completedUsers = new Set((completed ?? []).map((row) => row.user_id))
+  // Set of "<session_id>:<user_id>" pairs that finished this session's test.
+  const completedPairs = new Set(
+    (completed ?? [])
+      .filter((row) => row.session_id)
+      .map((row) => `${row.session_id}:${row.user_id}`)
+  )
 
   const bySession = new Map<string, { total: number; done: number }>()
   for (const p of participants ?? []) {
     const entry = bySession.get(p.session_id) ?? { total: 0, done: 0 }
     entry.total += 1
-    if (completedUsers.has(p.user_id)) entry.done += 1
+    if (completedPairs.has(`${p.session_id}:${p.user_id}`)) entry.done += 1
     bySession.set(p.session_id, entry)
   }
 
@@ -60,12 +69,11 @@ export async function getSessionById(id: string): Promise<SessionRow | null> {
 }
 
 /**
- * Participants of a session with their best completed simulation result —
+ * Participants of a session with the result they earned IN THIS SESSION —
  * the data source for both the on-screen roster and the Excel export.
  *
- * Each participant's "best" attempt = highest total_score among their
- * completed attempts. Attempts aren't yet linked to a specific session, so a
- * student's best overall result is shown for the session they belong to.
+ * With one attempt per session, the result is the completed attempt tagged with
+ * this session_id (the reduce keeps the highest just as a safety net).
  */
 export async function getSessionParticipants(
   sessionId: string
@@ -96,6 +104,7 @@ export async function getSessionParticipants(
         "user_id, total_score, listening_converted, structure_converted, reading_converted, completed_at"
       )
       .eq("status", "completed")
+      .eq("session_id", sessionId)
       .in("user_id", userIds),
   ])
 
@@ -132,49 +141,60 @@ export async function getSessionParticipants(
 
 /**
  * Sessions a student has joined (RLS: sessions_select_participant), newest
- * session first, each annotated with the student's own best total score.
+ * session first, each annotated with the student's own attempt for it (used by
+ * the session card to show Mulai / Lanjutkan / Lihat Hasil).
  */
 export async function getJoinedSessions(
   userId: string
 ): Promise<JoinedSession[]> {
   const supabase = await createClient()
 
-  const [{ data: memberships, error }, { data: attempts }] = await Promise.all([
-    supabase
-      .from("session_participants")
-      .select("session_id, joined_at")
-      .eq("user_id", userId)
-      .order("joined_at", { ascending: false }),
-    supabase
-      .from("test_attempts")
-      .select("total_score")
-      .eq("user_id", userId)
-      .eq("status", "completed"),
-  ])
+  const { data: memberships, error } = await supabase
+    .from("session_participants")
+    .select("session_id, joined_at")
+    .eq("user_id", userId)
+    .order("joined_at", { ascending: false })
 
   if (error) throw new Error(error.message)
   if (!memberships || memberships.length === 0) return []
 
-  const bestTotalScore =
-    (attempts ?? []).reduce<number | null>((best, row) => {
-      if (row.total_score == null) return best
-      return best == null ? row.total_score : Math.max(best, row.total_score)
-    }, null) ?? null
-
   // RLS (sessions_select_participant) returns exactly the joined sessions.
   const sessionIds = memberships.map((m) => m.session_id)
-  const { data: sessions } = await supabase
-    .from("sessions")
-    .select("*")
-    .in("id", sessionIds)
+  const [{ data: sessions }, { data: attempts }] = await Promise.all([
+    supabase.from("sessions").select("*").in("id", sessionIds),
+    supabase
+      .from("test_attempts")
+      .select("id, session_id, status, current_section, total_score, started_at")
+      .eq("user_id", userId)
+      .in("session_id", sessionIds)
+      .order("started_at", { ascending: false }),
+  ])
 
   const sessionById = new Map((sessions ?? []).map((s) => [s.id, s]))
+
+  // One attempt per session — keep the newest (already sorted desc by start).
+  const attemptBySession = new Map<string, SessionAttempt>()
+  for (const a of attempts ?? []) {
+    if (a.session_id && !attemptBySession.has(a.session_id)) {
+      attemptBySession.set(a.session_id, {
+        id: a.id,
+        status: a.status,
+        currentSection: a.current_section,
+        totalScore: a.total_score,
+      })
+    }
+  }
 
   // Preserve the membership order (newest joined first).
   const result: JoinedSession[] = []
   for (const m of memberships) {
     const session = sessionById.get(m.session_id)
-    if (session) result.push({ ...session, bestTotalScore })
+    if (session) {
+      result.push({
+        ...session,
+        attempt: attemptBySession.get(m.session_id) ?? null,
+      })
+    }
   }
   return result
 }

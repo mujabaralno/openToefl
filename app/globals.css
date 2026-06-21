@@ -177,10 +177,13 @@
 /* Landing Page — Custom Properties */
 :root {
   --status-active: 211 100% 44%;
+  /* Non-theme status hue (maintenance / paused) — amber. */
+  --status-warning: 38 92% 50%;
 }
 
 .dark {
   --status-active: 211 100% 55%;
+  --status-warning: 38 95% 58%;
 }
 
 /* Landing Page — Gradient Text */
