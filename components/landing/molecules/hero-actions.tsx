@@ -1,15 +1,19 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export function HeroActions() {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-      <Button
-        asChild
-        className="h-auto w-full rounded-full px-8 py-4 text-sm font-medium shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl active:scale-95 sm:w-auto"
-      >
-        <Link href="/register">Mulai Simulasi Gratis</Link>
+    <div className="flex flex-col gap-3 sm:flex-row">
+      <Button asChild size="lg" className="w-full sm:w-auto">
+        <Link href="/register">
+          Mulai simulasi
+          <ArrowRight className="size-4" aria-hidden="true" />
+        </Link>
+      </Button>
+      <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
+        <Link href="#simulation">Lihat format tes</Link>
       </Button>
     </div>
-  )
+  );
 }

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { StatusDot } from "@/components/landing/atoms/status-dot";
+import { Badge } from "@/components/ui/badge";
 
 interface AnnouncementBadgeProps {
   label: string;
@@ -8,17 +8,15 @@ interface AnnouncementBadgeProps {
 
 export function AnnouncementBadge({ label, className }: AnnouncementBadgeProps) {
   return (
-    <div
+    <Badge
+      variant="outline"
       className={cn(
-        "inline-flex cursor-pointer items-center gap-2.5 rounded-full border border-border px-4 py-1.5 shadow-sm transition-colors hover:border-primary/30",
-        "bg-card",
+        "gap-2 rounded-md border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-none",
         className
       )}
     >
-      <StatusDot />
-      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {label}
-      </span>
-    </div>
+      <span className="size-1.5 rounded-full bg-primary" aria-hidden="true" />
+      {label}
+    </Badge>
   );
 }

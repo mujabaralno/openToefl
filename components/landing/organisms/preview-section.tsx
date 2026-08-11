@@ -1,104 +1,117 @@
-import { MockupWindowControls } from "@/components/landing/molecules/mockup-window-controls"
+import { Check, Clock3 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+
+const OPTIONS = [
+  "Bentuk lembah yang dihasilkan",
+  "Kecepatan pergerakan air",
+  "Suhu material yang dipindahkan",
+];
 
 export function PreviewSection() {
   return (
-    <section className="relative z-10 mx-auto mb-32 max-w-[1200px] px-8">
-      <div className="mockup-container relative">
-        {/* Glow effect behind mockup */}
-        <div className="absolute inset-0 -z-10 scale-90 rounded-full bg-primary/5 blur-[80px]" />
+    <section id="simulation" className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8 lg:pb-28">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-medium text-primary">Format tes</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+            Satu layar untuk passage dan jawaban.
+          </h2>
+        </div>
+        <p className="max-w-md text-sm leading-6 text-muted-foreground">
+          Timer, nomor soal, dan progress tetap terlihat saat Anda mengerjakan setiap bagian.
+        </p>
+      </div>
 
-        <div className="mockup-screen relative aspect-[16/10] overflow-hidden rounded-2xl border border-border/50 bg-card ring-1 ring-foreground/5">
-          <MockupWindowControls />
-
-          {/* Simulation UI Mockup */}
-          <div className="flex h-full flex-col bg-secondary">
-            {/* Simulation Header */}
-            <div className="relative z-10 flex h-14 items-center justify-between border-b border-border bg-card/80 px-6 pl-20 backdrop-blur-md">
-              <span className="font-mono text-[13px] font-medium tracking-wide text-muted-foreground">
-                TOEFL ITP® Simulation — Reading Section
-              </span>
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2 rounded-full border border-destructive/20 bg-destructive/5 px-3 py-1 text-destructive">
-                  <svg
-                    className="size-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <span className="font-mono text-[13px] font-bold">14:32</span>
-                </div>
-                <div className="rounded-full bg-foreground px-5 py-1.5 text-[12px] font-bold tracking-wider text-background">
-                  NEXT
-                </div>
-              </div>
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        <div className="flex flex-col gap-4 border-b border-border bg-muted/30 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex items-center gap-3">
+            <span className="flex size-8 items-center justify-center rounded-md border border-border bg-card text-sm font-semibold">
+              02
+            </span>
+            <div>
+              <p className="text-sm font-medium">Reading section</p>
+              <p className="text-xs text-muted-foreground">Question 12 of 50</p>
             </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock3 className="size-4" aria-hidden="true" />
+              <span className="font-mono text-foreground">14:32</span>
+            </div>
+            <Badge variant="secondary">In progress</Badge>
+          </div>
+        </div>
 
-            {/* Simulation Content */}
-            <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
-              {/* Reading Passage */}
-              <div className="overflow-y-auto border-r border-border bg-card p-6 md:p-10">
-                <h3 className="mb-6 text-lg font-semibold tracking-tight md:text-xl">
-                  The Impact of Glacial Erosion
-                </h3>
-                <div className="space-y-5 text-sm leading-relaxed text-muted-foreground md:text-[15px]">
-                  <p>
-                    Glacial erosion is the process by which glaciers move across the landscape,
-                    carving out valleys and shaping the Earth&apos;s surface. Unlike river erosion,
-                    which tends to create V-shaped valleys, glacial erosion creates broad, U-shaped
-                    valleys...
-                  </p>
-                  <p>
-                    <span className="mr-1 inline-block rounded bg-secondary px-1 text-xs text-foreground">
-                      [1]
-                    </span>{" "}
-                    This process occurs through two primary mechanisms: plucking and abrasion.
-                    Plucking happens when meltwater freezes in the cracks of rocks beneath a
-                    glacier...
-                  </p>
-                </div>
-              </div>
+        <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
+          <article className="p-6 sm:p-8 lg:border-r lg:border-border">
+            <div className="mb-5 flex items-center justify-between text-xs text-muted-foreground">
+              <span>Passage 1</span>
+              <span>Reading</span>
+            </div>
+            <h3 className="text-xl font-semibold tracking-tight">The Impact of Glacial Erosion</h3>
+            <Separator className="my-5" />
+            <div className="space-y-4 text-sm leading-7 text-muted-foreground">
+              <p>
+                Glacial erosion shapes the landscape as a glacier moves across the ground. The
+                process creates broad, U-shaped valleys that differ from the V-shaped valleys made
+                by rivers.
+              </p>
+              <p>
+                Two mechanisms drive this change: plucking removes pieces of rock, while abrasion
+                smooths the surface beneath the ice.
+              </p>
+            </div>
+          </article>
 
-              {/* Question Panel */}
-              <div className="flex flex-col gap-6 overflow-y-auto bg-sidebar p-6 md:p-10">
-                <div className="rounded-xl border border-border bg-card p-6 shadow-sm md:p-8">
-                  <p className="mb-6 text-base font-medium text-foreground md:text-lg">
-                    Menurut paragraf 1, apa perbedaan utama antara erosi sungai dan erosi glasial?
-                  </p>
-                  <div className="space-y-3">
-                    {/* Option A */}
-                    <label className="group/opt flex cursor-pointer items-center gap-4 rounded-lg border border-border p-4 transition-all hover:border-primary/40 hover:bg-secondary">
-                      <div className="h-4 w-4 flex-shrink-0 rounded-full border border-muted-foreground transition-colors group-hover/opt:border-primary" />
-                      <span className="text-sm text-muted-foreground transition-colors group-hover/opt:text-foreground">
-                        Kecepatan pergerakan air
-                      </span>
-                    </label>
-
-                    {/* Option B (Selected) */}
-                    <label className="group/opt flex cursor-pointer items-center gap-4 rounded-lg border-2 border-primary bg-primary/[0.02] p-4 shadow-sm transition-all">
-                      <div className="h-4 w-4 flex-shrink-0 rounded-full border-[5px] border-primary" />
-                      <span className="text-sm font-medium text-foreground">
-                        Bentuk lembah yang dihasilkan
-                      </span>
-                    </label>
-
-                    {/* Option C */}
-                    <label className="group/opt flex cursor-pointer items-center gap-4 rounded-lg border border-border p-4 transition-all hover:border-primary/40 hover:bg-secondary">
-                      <div className="h-4 w-4 flex-shrink-0 rounded-full border border-muted-foreground transition-colors group-hover/opt:border-primary" />
-                      <span className="text-sm text-muted-foreground transition-colors group-hover/opt:text-foreground">
-                        Suhu material yang dipindahkan
-                      </span>
-                    </label>
+          <div className="bg-muted/20 p-6 sm:p-8">
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <p className="text-sm font-medium">Menurut paragraf 1, apa perbedaan utamanya?</p>
+              <span className="shrink-0 text-xs text-muted-foreground">1 poin</span>
+            </div>
+            <div className="space-y-3">
+              {OPTIONS.map((option, index) => {
+                const selected = index === 0;
+                return (
+                  <div
+                    key={option}
+                    className={
+                      selected
+                        ? "flex items-center gap-3 rounded-lg border border-primary bg-primary/5 p-4"
+                        : "flex items-center gap-3 rounded-lg border border-border bg-card p-4"
+                    }
+                  >
+                    <span
+                      className={
+                        selected
+                          ? "flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                          : "flex size-5 shrink-0 items-center justify-center rounded-full border border-border text-xs text-muted-foreground"
+                      }
+                    >
+                      {selected ? (
+                        <Check className="size-3" aria-hidden="true" />
+                      ) : (
+                        String.fromCharCode(65 + index)
+                      )}
+                    </span>
+                    <span className={selected ? "text-sm font-medium" : "text-sm text-muted-foreground"}>
+                      {option}
+                    </span>
                   </div>
-                </div>
+                );
+              })}
+            </div>
+            <div className="mt-8 space-y-2">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Progress simulasi</span>
+                <span>24%</span>
               </div>
+              <Progress value={24} aria-label="Progress simulasi 24 persen" />
             </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

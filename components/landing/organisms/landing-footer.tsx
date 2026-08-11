@@ -1,36 +1,36 @@
-import Link from "next/link"
-import { FooterLinkGroup } from "@/components/landing/molecules/footer-link-group"
-import { SocialLinks } from "@/components/landing/molecules/social-links"
+import { BookOpenCheck } from "lucide-react";
+import Link from "next/link";
+import { FooterLinkGroup } from "@/components/landing/molecules/footer-link-group";
 
 const PRODUCT_LINKS = [
-  { label: "Simulasi", href: "#" },
-  { label: "Bank Soal", href: "#" },
-  { label: "Analisis AI", href: "#" },
-]
+  { label: "Simulasi", href: "#simulation" },
+  { label: "Fitur", href: "#features" },
+  { label: "Masuk", href: "/login" },
+];
 
 export function LandingFooter() {
   return (
-    <footer className="relative z-10 mt-20 border-t border-border bg-card pb-16 pt-20">
-      <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-start gap-12 px-8 md:grid-cols-2 lg:flex lg:justify-between lg:gap-24">
-        {/* Brand Column */}
+    <footer className="border-t border-border bg-card py-12">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[1fr_auto] lg:px-8">
         <div className="max-w-xs">
-          <Link
-            href="/"
-            className="mb-6 inline-block text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
-          >
-            Open TOEFL
+          <Link href="/" className="inline-flex items-center gap-2 font-semibold tracking-tight">
+            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <BookOpenCheck className="size-4" aria-hidden="true" />
+            </span>
+            PTESOL
           </Link>
-          <p className="mb-8 text-sm leading-relaxed text-muted-foreground">
-            © 2024 Open TOEFL. Persiapan berbasis performa untuk masa depan global Anda.
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+            Platform simulasi TOEFL ITP untuk mahasiswa, dosen, dan staf pengelola tes.
           </p>
-          <SocialLinks />
         </div>
 
-        {/* Link Columns */}
-        <div className="grid w-full grid-cols-2 gap-16 lg:w-auto lg:gap-24">
-          <FooterLinkGroup title="Produk" links={PRODUCT_LINKS} />
+        <div className="w-40">
+          <FooterLinkGroup title="Navigasi" links={PRODUCT_LINKS} />
         </div>
       </div>
+      <div className="mx-auto mt-10 max-w-7xl border-t border-border px-4 pt-6 text-sm text-muted-foreground sm:px-6 lg:px-8">
+        © {new Date().getFullYear()} PTESOL.
+      </div>
     </footer>
-  )
+  );
 }

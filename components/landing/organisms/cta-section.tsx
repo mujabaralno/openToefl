@@ -1,32 +1,34 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { ArrowRight, Check } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+const BENEFITS = ["Tidak perlu kartu kredit", "Hasil tersimpan di akun Anda"];
 
 export function CtaSection() {
   return (
-    <section className="mx-auto max-w-[1200px] px-8">
-      <div className="relative overflow-hidden rounded-3xl bg-foreground p-10 text-center text-background shadow-2xl md:p-16">
-        {/* Radial glow overlay */}
-        <div className="pointer-events-none absolute inset-0 opacity-20">
-          <div className="absolute -left-[20%] -top-[100%] h-[200%] w-[150%] bg-[radial-gradient(ellipse_at_center,_hsl(var(--background)/0.2),_transparent)] blur-[80px]" />
+    <section id="start" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+      <div className="grid items-center gap-8 rounded-2xl border border-primary/20 bg-primary p-8 text-primary-foreground shadow-sm md:grid-cols-[1fr_auto] md:p-12">
+        <div>
+          <p className="text-sm font-medium text-primary-foreground/75">Mulai dari satu simulasi</p>
+          <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
+            Ukur kemampuan Anda sebelum menentukan target belajar.
+          </h2>
+          <div className="mt-6 flex flex-col gap-3 text-sm text-primary-foreground/80 sm:flex-row sm:gap-6">
+            {BENEFITS.map((benefit) => (
+              <span key={benefit} className="flex items-center gap-2">
+                <Check className="size-4" aria-hidden="true" />
+                {benefit}
+              </span>
+            ))}
+          </div>
         </div>
-
-        <h2 className="relative z-10 mb-6 text-3xl font-bold tracking-tight md:text-[40px] md:leading-[1.1]">
-          Siap untuk Mencapai Skor Impian Anda?
-        </h2>
-        <p className="relative z-10 mx-auto mb-10 max-w-[600px] text-lg leading-relaxed text-background/70">
-          Bergabunglah dengan lebih dari 50,000 siswa yang telah sukses dengan persiapan berbasis
-          data kami.
-        </p>
-        <div className="relative z-10">
-          <Button
-            asChild
-            variant="secondary"
-            className="h-auto rounded-full px-10 py-4 text-base font-semibold shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl active:scale-95"
-          >
-            <Link href="/register">Mulai Sekarang — Gratis</Link>
-          </Button>
-        </div>
+        <Button asChild size="lg" variant="secondary" className="w-full md:w-auto">
+          <Link href="/register">
+            Buat akun gratis
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        </Button>
       </div>
     </section>
-  )
+  );
 }

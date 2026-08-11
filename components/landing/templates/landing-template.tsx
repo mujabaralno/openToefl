@@ -15,14 +15,9 @@ export function LandingTemplate() {
         Lewati ke konten utama
       </a>
 
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-40 border-b border-border/60 bg-card/40" />
-        <div className="absolute inset-y-0 left-1/2 w-full max-w-7xl -translate-x-1/2 border-x border-border/40" />
-      </div>
-
       <LandingNavbar />
 
-      <main id="landing-content" className="relative isolate pb-24">
+      <main id="landing-content" className="pb-4">
         <HeroSection />
         <PreviewSection />
         <FeaturesSection />
