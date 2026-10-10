@@ -5,81 +5,86 @@ import {
   Headphones,
   LibraryBig,
   Trophy,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { FeatureCard } from "@/components/landing/molecules/feature-card";
+} from "lucide-react"
+import { FeatureCard } from "@/components/landing/molecules/feature-card"
+import { Reveal } from "@/components/landing/animations/reveal"
 
-interface Feature {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-}
-
-const FEATURES: Feature[] = [
+const FEATURES = [
   {
     icon: ClipboardCheck,
     title: "Simulasi penuh",
     description:
-      "Kerjakan tiga seksi TOEFL ITP dengan timer, navigasi soal, dan alur ujian yang konsisten.",
+      "Tiga seksi dalam satu alur ujian. Biasakan diri dengan timer dan navigasi soal sebelum hari tes.",
   },
   {
     icon: Headphones,
     title: "Latihan per seksi",
     description:
-      "Fokus pada Listening, Structure, atau Reading tanpa harus memulai simulasi penuh.",
+      "Listening, Structure, atau Reading. Pilih bagian yang ingin kamu kuasai, lalu latih dengan fokus.",
   },
   {
     icon: BarChart3,
-    title: "Skor dan riwayat",
+    title: "Progres yang terlihat",
     description:
-      "Lihat skor total 310–677, hasil per seksi, dan perkembangan dari percobaan sebelumnya.",
+      "Lihat skor total, hasil per seksi, dan riwayat latihan. Kenali bagian yang masih perlu diasah.",
   },
   {
     icon: BrainCircuit,
-    title: "Analisis jawaban",
+    title: "Kenali pola kesalahan",
     description:
-      "Tinjau pola kesalahan dan gunakan analisis AI saat konfigurasi layanan tersedia.",
+      "Tinjau kembali jawabanmu dan manfaatkan analisis AI untuk membantu menentukan fokus belajar.",
   },
   {
     icon: LibraryBig,
-    title: "Bank soal terkelola",
+    title: "Soal yang terkelola",
     description:
-      "Dosen dan staf dapat mengelola soal, passage, audio, serta sesi tes dari satu panel admin.",
+      "Soal, passage, audio, dan sesi tes dikelola dosen atau staf dalam satu panel yang terpusat.",
   },
   {
     icon: Trophy,
-    title: "Leaderboard",
+    title: "Tantangan bersama",
     description:
-      "Bandingkan hasil dalam sesi yang sama saat pengelola mengaktifkan peringkat peserta.",
+      "Lihat posisimu di leaderboard sesi saat peringkat diaktifkan. Jadikan motivasi untuk latihan lagi.",
   },
-];
+] as const
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="border-y border-border bg-muted/30 py-20 sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 max-w-2xl">
-          <p className="text-sm font-medium text-primary">Satu tempat untuk persiapan tes</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Dari latihan sampai evaluasi hasil.
-          </h2>
-          <p className="mt-4 leading-7 text-muted-foreground">
-            Mahasiswa mendapat ruang latihan yang jelas. Pengelola mendapat alat untuk menyiapkan
-            soal dan memantau sesi.
+    <section
+      id="features"
+      aria-labelledby="features-title"
+      className="scroll-mt-20 border-y-2 border-border bg-muted py-20 lg:py-24"
+    >
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <Reveal
+          className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end"
+          stagger={0.1}
+        >
+          <div>
+            <p className="font-mono text-[10px] text-muted-foreground">02 / ISI INVENTORY-MU</p>
+            <h2
+              id="features-title"
+              className="mt-4 font-serif text-xl leading-relaxed tracking-[-0.04em] sm:text-2xl"
+            >
+              Bekal lengkap.
+              <br />
+              Siap naik level.
+            </h2>
+          </div>
+          <p className="max-w-sm text-xl leading-snug text-muted-foreground">
+            Dari latihan pertama sampai evaluasi hasil, semua ada di satu tempat.
           </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((feature) => (
+        </Reveal>
+        <Reveal className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
+          {FEATURES.map((feature, index) => (
             <FeatureCard
               key={feature.title}
-              icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
+              {...feature}
+              number={String(index + 1).padStart(2, "0")}
             />
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
-  );
+  )
 }

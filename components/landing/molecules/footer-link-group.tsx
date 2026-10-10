@@ -1,33 +1,31 @@
-import Link from "next/link";
+import Link from "next/link"
 
 interface FooterLink {
-  label: string;
-  href: string;
+  label: string
+  href: string
 }
 
 interface FooterLinkGroupProps {
-  title: string;
-  links: FooterLink[];
+  title: string
+  links: FooterLink[]
 }
 
 export function FooterLinkGroup({ title, links }: FooterLinkGroupProps) {
   return (
-    <div>
-      <h5 className="mb-6 text-xs font-semibold uppercase tracking-widest text-foreground">
-        {title}
-      </h5>
-      <ul className="space-y-4">
+    <nav aria-label={title}>
+      <p className="mb-4 font-mono text-[10px] text-muted-foreground">{title}</p>
+      <ul className="flex flex-wrap gap-x-6 gap-y-3 sm:gap-8">
         {links.map((link) => (
           <li key={link.label}>
             <Link
               href={link.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-block py-1 text-xl underline-offset-4 hover:underline"
             >
               {link.label}
             </Link>
           </li>
         ))}
       </ul>
-    </div>
-  );
+    </nav>
+  )
 }

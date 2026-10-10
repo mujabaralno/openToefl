@@ -1,0 +1,31 @@
+.landing {
+  /* Use the pixel fonts already loaded by next/font in the root layout. */
+  --font-sans: var(--font-VT-323), monospace;
+  --font-serif: var(--font-press-start), monospace;
+  --font-mono: var(--font-silk-screen), monospace;
+  font-family: var(--font-sans);
+}
+
+.landing a {
+  scroll-margin-top: 6rem;
+}
+
+.landing a:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 5px;
+}
+
+.landing :global([data-slot="button"]) {
+  transition-property: transform, background-color, color;
+  transition-duration: 160ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing *,
+  .landing *::before,
+  .landing *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
