@@ -26,11 +26,42 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
 import { getInitials } from "@/lib/users"
 import { profileSchema } from "@/lib/validations/settings"
 import { updateProfileAction } from "@/server/actions/settings"
 import type { ProfileFormData } from "@/types/settings"
+
+// Gaya pixel: semua warna dari token (lihat tokens.css)
+const focusClass =
+  "focus-visible:ring-0 focus-visible:outline-3 focus-visible:outline-solid focus-visible:outline-offset-3 focus-visible:outline-ring"
+
+const fieldClass = cn(
+  "h-12 rounded-none border-3 border-border bg-card px-4 font-sans text-xl text-foreground shadow-none dark:bg-background",
+  "placeholder:text-muted-foreground focus-visible:border-border",
+  "disabled:border-border/30 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 dark:disabled:bg-muted",
+  focusClass
+)
+
+const labelClass = "font-mono text-xs font-bold text-foreground"
+const messageClass = "text-lg text-danger-foreground"
+
+const secondaryButtonClass = cn(
+  "h-9 w-fit rounded-none border-3 border-border bg-card px-3 font-mono text-[11px] font-bold uppercase text-foreground shadow-sm",
+  "transition-transform hover:-translate-x-px hover:-translate-y-px hover:bg-accent hover:shadow",
+  "active:translate-x-0.5 active:translate-y-0.5 active:shadow-2xs",
+  "disabled:border-border/30 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 disabled:shadow-none",
+  focusClass
+)
+
+const primaryButtonClass = cn(
+  "h-11 w-fit rounded-none border-3 border-primary-foreground bg-primary px-5 font-mono text-xs font-bold tracking-wider uppercase text-primary-foreground shadow-sm",
+  "transition-transform hover:-translate-x-px hover:-translate-y-px hover:bg-primary hover:shadow",
+  "active:translate-x-0.5 active:translate-y-0.5 active:shadow-2xs",
+  "disabled:border-border/30 disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 disabled:shadow-none",
+  focusClass
+)
 
 interface ProfileCardProps {
   userId: string
@@ -97,26 +128,39 @@ export function ProfileCard({ userId, email, initial }: ProfileCardProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Profil</CardTitle>
-        <CardDescription>Perbarui identitas dan foto Anda.</CardDescription>
+    <Card className="rounded-none border-4 border-border shadow">
+      <CardHeader className="gap-2 border-b-2 border-border pb-4">
+        <CardTitle className="font-serif text-sm leading-snug font-normal">
+          Profil
+        </CardTitle>
+        <CardDescription className="text-xl leading-tight text-muted-foreground">
+          Perbarui identitas dan foto Anda.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-5"
+          >
             <div className="flex items-center gap-4">
-              <Avatar size="lg">
-                <AvatarImage src={avatarUrl || undefined} alt={fullName} />
-                <AvatarFallback className="font-mono">
+              {/* Avatar kotak 56px: tanpa prop size agar tidak bentrok dengan data-size */}
+              <Avatar className="size-14 rounded-none border-3 border-border shadow-xs">
+                <AvatarImage
+                  src={avatarUrl || undefined}
+                  alt={fullName}
+                  className="rounded-none"
+                />
+                <AvatarFallback className="rounded-none bg-primary font-serif text-sm text-primary-foreground">
                   {getInitials(fullName || email)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <input
                   ref={inputRef}
                   type="file"
                   accept="image/*"
+                  aria-label="Pilih foto profil"
                   className="sr-only"
                   onChange={onSelectFile}
                 />
@@ -124,22 +168,30 @@ export function ProfileCard({ userId, email, initial }: ProfileCardProps) {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="w-fit"
+                  className={secondaryButtonClass}
                   disabled={uploading}
                   onClick={() => inputRef.current?.click()}
                 >
-                  <Upload />
+                  <Upload aria-hidden="true" />
                   {uploading ? "Mengunggah…" : "Ganti foto"}
                 </Button>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-lg leading-none text-muted-foreground">
                   PNG/JPG, maksimal 2MB.
                 </span>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Email</Label>
-              <Input value={email} disabled readOnly />
+              <Label htmlFor="profile-email" className={labelClass}>
+                Email
+              </Label>
+              <Input
+                id="profile-email"
+                value={email}
+                disabled
+                readOnly
+                className={fieldClass}
+              />
             </div>
 
             <FormField
@@ -147,11 +199,11 @@ export function ProfileCard({ userId, email, initial }: ProfileCardProps) {
               name="full_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nama lengkap</FormLabel>
+                  <FormLabel className={labelClass}>Nama lengkap</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className={fieldClass} {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className={messageClass} />
                 </FormItem>
               )}
             />
@@ -162,11 +214,11 @@ export function ProfileCard({ userId, email, initial }: ProfileCardProps) {
                 name="student_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>NIM</FormLabel>
+                    <FormLabel className={labelClass}>NIM</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input className={fieldClass} {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className={messageClass} />
                   </FormItem>
                 )}
               />
@@ -175,11 +227,11 @@ export function ProfileCard({ userId, email, initial }: ProfileCardProps) {
                 name="program_study"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Program studi</FormLabel>
+                    <FormLabel className={labelClass}>Program studi</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input className={fieldClass} {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className={messageClass} />
                   </FormItem>
                 )}
               />
@@ -187,7 +239,7 @@ export function ProfileCard({ userId, email, initial }: ProfileCardProps) {
 
             <Button
               type="submit"
-              className="w-fit"
+              className={primaryButtonClass}
               disabled={isPending || uploading}
             >
               {isPending ? "Menyimpan…" : "Simpan profil"}

@@ -18,30 +18,33 @@ interface SidebarContentProps {
  * The inner contents of the sidebar — brand mark, panel label, and nav list.
  * Rendered both in the fixed desktop aside and inside the mobile Sheet, so it
  * carries no layout chrome of its own beyond internal spacing.
+ *
+ * Border kanan sidebar (border-r-4 border-sidebar-border) dipasang di <aside>
+ * pada layout, bukan di sini, supaya Sheet mobile tidak ikut dobel border.
  */
 export function SidebarContent({ items, homeHref, panelLabel, onNavigate }: SidebarContentProps) {
   return (
-    <div className="flex h-full flex-col bg-sidebar gap-6 px-4 py-6">
+    <div className="flex h-full flex-col gap-7 bg-sidebar p-4 text-sidebar-foreground">
       <Link
         href={homeHref}
         onClick={onNavigate}
-        className="flex items-center gap-2.5 rounded-md px-2 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none"
+        className="flex items-center gap-3 focus-visible:outline-3 focus-visible:outline-solid focus-visible:outline-offset-3 focus-visible:outline-sidebar-ring"
       >
-        <span className="flex size-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
+        <span className="flex size-10 shrink-0 items-center justify-center border-3 border-black bg-sidebar-primary text-sidebar-primary-foreground shadow-[3px_3px_0_var(--color-black)]">
           <GraduationCap className="size-5" aria-hidden="true" />
         </span>
-        <span className="flex flex-col leading-none">
-          <span className="text-base font-semibold tracking-tight text-sidebar-foreground">
+        <span className="flex flex-col">
+          <span className="font-serif text-[13px] leading-snug text-white">
             Open TOEFL
           </span>
-          <span className="mt-1 font-mono text-[10px] tracking-[0.2em] text-sidebar-foreground/45 uppercase">
+          <span className="mt-1.5 font-mono text-[9px] tracking-wider text-sidebar-primary uppercase">
             TOEFL ITP
           </span>
         </span>
       </Link>
 
-      <div className="flex flex-col gap-2">
-        <p className="px-3 font-mono text-[10px] tracking-[0.18em] text-sidebar-foreground/45 uppercase">
+      <div className="flex flex-col gap-3">
+        <p className="px-1 font-mono text-[10px] tracking-widest text-sidebar-foreground/70 uppercase">
           {panelLabel}
         </p>
         <SidebarNav items={items} onNavigate={onNavigate} />

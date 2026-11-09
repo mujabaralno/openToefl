@@ -3,10 +3,12 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { History } from "lucide-react"
 import { type DateRange } from "react-day-picker"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { EmptyState } from "../shared/empty-state" 
 import {
   Select,
   SelectContent,
@@ -48,11 +50,61 @@ const statusLabels: Record<string, string> = {
   violated: "Pelanggaran",
 }
 
-const statusVariant: Record<string, React.ComponentProps<typeof Badge>["variant"]> = {
-  completed: "secondary",
-  in_progress: "outline",
-  violated: "destructive",
+// ---- Gaya pixel: semua warna dari token (lihat tokens.css) ----
+
+const focusClass =
+  "focus-visible:ring-0 focus-visible:outline-3 focus-visible:outline-solid focus-visible:outline-offset-3 focus-visible:outline-ring"
+
+const primaryButtonClass = cn(
+  "h-11 rounded-none border-3 border-primary-foreground bg-primary px-5 font-mono text-xs font-bold tracking-wider uppercase text-primary-foreground shadow-sm",
+  "transition-transform hover:-translate-x-px hover:-translate-y-px hover:bg-primary hover:shadow",
+  "active:translate-x-0.5 active:translate-y-0.5 active:shadow-2xs",
+  focusClass
+)
+
+const secondaryButtonClass = cn(
+  "h-11 rounded-none border-3 border-border bg-card px-5 font-mono text-xs font-bold tracking-wider uppercase text-foreground shadow-sm",
+  "transition-transform hover:-translate-x-px hover:-translate-y-px hover:bg-accent hover:shadow",
+  "active:translate-x-0.5 active:translate-y-0.5 active:shadow-2xs",
+  focusClass
+)
+
+const filterTriggerClass = cn(
+  "w-full rounded-none border-3 border-border bg-card px-3 font-sans text-xl text-foreground shadow-none",
+  "data-[size=default]:h-11 dark:bg-background dark:hover:bg-background",
+  "focus-visible:border-border focus-visible:ring-0 focus-visible:outline-3 focus-visible:outline-solid focus-visible:outline-offset-3 focus-visible:outline-ring",
+  "data-[state=open]:outline-3 data-[state=open]:outline-solid data-[state=open]:outline-offset-3 data-[state=open]:outline-ring"
+)
+
+const selectContentClass =
+  "rounded-none border-3 border-border bg-popover text-popover-foreground shadow-md"
+
+const selectItemClass = cn(
+  "rounded-none py-2.5 pr-9 pl-3.5 text-xl",
+  "focus:bg-accent focus:text-accent-foreground",
+  "data-[state=checked]:bg-primary data-[state=checked]:font-bold data-[state=checked]:text-primary-foreground",
+  "data-[state=checked]:focus:bg-primary data-[state=checked]:focus:text-primary-foreground",
+  "[&_svg:not([class*='text-'])]:text-current"
+)
+
+// Badge: kotak bergaris dengan bayangan keras kecil, warna dari token status
+const badgeBase =
+  "gap-1.5 rounded-none border-2 border-border px-2 py-0.5 font-mono text-[10px] leading-none font-bold shadow-xs"
+
+const typeClass: Record<HistoryType, string> = {
+  simulation: "border-primary-foreground bg-primary text-primary-foreground",
+  practice: "bg-info text-info-foreground",
 }
+
+const statusClass: Record<string, string> = {
+  completed: "bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200",
+  in_progress: "bg-success text-success-foreground",
+  violated: "bg-danger text-danger-foreground",
+}
+
+const headClass =
+  "h-11 border-r-2 border-border px-3 font-mono text-xs font-bold text-foreground last:border-r-0"
+const cellClass = "border-r-2 border-border/30 px-3 py-3 last:border-r-0"
 
 export function HistoryView({ entries }: HistoryViewProps) {
   const router = useRouter()
@@ -80,44 +132,61 @@ export function HistoryView({ entries }: HistoryViewProps) {
 
   if (entries.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card py-16 text-center">
-        <p className="text-sm text-muted-foreground">
-          Belum ada riwayat. Mulai simulasi atau latihan dulu.
-        </p>
-        <div className="flex gap-2">
-          <Button asChild>
-            <Link href="/simulation">Mulai Simulasi</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/practice">Mode Latihan</Link>
-          </Button>
-        </div>
-      </div>
+      <EmptyState
+        icon={History}
+        title="Belum ada riwayat"
+        description="Mulai simulasi atau latihan dulu."
+        className="bg-card"
+        action={
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button asChild className={primaryButtonClass}>
+              <Link href="/simulation">Mulai Simulasi</Link>
+            </Button>
+            <Button asChild variant="outline" className={secondaryButtonClass}>
+              <Link href="/practice">Mode Latihan</Link>
+            </Button>
+          </div>
+        }
+      />
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
-      <div className="flex flex-col gap-2 border-b border-border p-3 sm:flex-row sm:items-center">
+    <div className="overflow-hidden border-4 border-border bg-card shadow">
+      <div className="flex flex-col gap-3 border-b-4 border-border p-3 sm:flex-row sm:items-center">
         <Select value={type} onValueChange={(value) => setType(value as TypeFilter)}>
-          <SelectTrigger aria-label="Filter tipe" className="w-full sm:w-36">
+          <SelectTrigger
+            aria-label="Filter tipe"
+            className={cn(filterTriggerClass, "sm:w-40")}
+          >
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Semua tipe</SelectItem>
-            <SelectItem value="simulation">Simulasi</SelectItem>
-            <SelectItem value="practice">Latihan</SelectItem>
+          <SelectContent className={selectContentClass}>
+            <SelectItem value="all" className={selectItemClass}>
+              Semua tipe
+            </SelectItem>
+            <SelectItem value="simulation" className={selectItemClass}>
+              Simulasi
+            </SelectItem>
+            <SelectItem value="practice" className={selectItemClass}>
+              Latihan
+            </SelectItem>
           </SelectContent>
         </Select>
 
         <Select value={section} onValueChange={(value) => setSection(value as SectionFilter)}>
-          <SelectTrigger aria-label="Filter seksi" className="w-full sm:w-40">
+          <SelectTrigger
+            aria-label="Filter seksi"
+            className={cn(filterTriggerClass, "sm:w-48")}
+          >
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Semua seksi</SelectItem>
+          <SelectContent className={selectContentClass}>
+            <SelectItem value="all" className={selectItemClass}>
+              Semua seksi
+            </SelectItem>
             {QUESTION_SECTIONS.map((value) => (
-              <SelectItem key={value} value={value}>
+              <SelectItem key={value} value={value} className={selectItemClass}>
                 {sectionLabels[value]}
               </SelectItem>
             ))}
@@ -128,19 +197,22 @@ export function HistoryView({ entries }: HistoryViewProps) {
       </div>
 
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="min-w-32">Tanggal</TableHead>
-            <TableHead className="w-28">Tipe</TableHead>
-            <TableHead className="w-32">Seksi</TableHead>
-            <TableHead className="w-20 text-right">Skor</TableHead>
-            <TableHead className="w-28 text-right">Status</TableHead>
+        <TableHeader className="bg-muted [&_tr]:border-b-2 [&_tr]:border-border">
+          <TableRow className="hover:bg-muted">
+            <TableHead className={cn(headClass, "min-w-32")}>Tanggal</TableHead>
+            <TableHead className={cn(headClass, "w-28")}>Tipe</TableHead>
+            <TableHead className={cn(headClass, "w-32")}>Seksi</TableHead>
+            <TableHead className={cn(headClass, "w-20 text-right")}>Skor</TableHead>
+            <TableHead className={cn(headClass, "w-28 text-right")}>Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filtered.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+            <TableRow className="hover:bg-transparent">
+              <TableCell
+                colSpan={5}
+                className="h-24 text-center text-xl text-muted-foreground"
+              >
                 Tidak ada riwayat yang cocok dengan filter.
               </TableCell>
             </TableRow>
@@ -151,22 +223,53 @@ export function HistoryView({ entries }: HistoryViewProps) {
                 <TableRow
                   key={`${entry.type}-${entry.id}`}
                   onClick={href ? () => router.push(href) : undefined}
-                  className={cn(href && "cursor-pointer")}
+                  onKeyDown={
+                    href
+                      ? (event) => {
+                          if (event.key === "Enter") router.push(href)
+                        }
+                      : undefined
+                  }
+                  tabIndex={href ? 0 : undefined}
+                  className={cn(
+                    "border-b-2 border-border/30 last:border-b-0 hover:bg-accent",
+                    href &&
+                      "cursor-pointer focus-visible:outline-3 focus-visible:outline-solid focus-visible:-outline-offset-3 focus-visible:outline-ring"
+                  )}
                 >
-                  <TableCell>{formatShortDate(entry.date)}</TableCell>
-                  <TableCell>
-                    <Badge variant={entry.type === "simulation" ? "default" : "secondary"}>
+                  <TableCell className={cn(cellClass, "font-mono text-xs font-bold")}>
+                    {formatShortDate(entry.date)}
+                  </TableCell>
+                  <TableCell className={cellClass}>
+                    <Badge
+                      variant="outline"
+                      className={cn(badgeBase, typeClass[entry.type])}
+                    >
                       {typeLabels[entry.type]}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell
+                    className={cn(cellClass, "font-mono text-xs text-muted-foreground")}
+                  >
                     {entry.section ? sectionLabels[entry.section] : "—"}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
+                  <TableCell
+                    className={cn(
+                      cellClass,
+                      "text-right font-mono text-xs font-bold tabular-nums"
+                    )}
+                  >
                     {entry.scoreLabel}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Badge variant={statusVariant[entry.status] ?? "outline"}>
+                  <TableCell className={cn(cellClass, "text-right")}>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        badgeBase,
+                        statusClass[entry.status] ?? "bg-muted text-foreground"
+                      )}
+                    >
+                      <span aria-hidden="true" className="size-1.5 bg-current" />
                       {statusLabels[entry.status] ?? entry.status}
                     </Badge>
                   </TableCell>

@@ -14,6 +14,7 @@ import {
   toSectionComparison,
   type ProgressAttempt,
 } from "@/lib/charts"
+import { EmptyState } from "../shared/empty-state"
 
 interface ProgressSectionProps {
   attempts: ProgressAttempt[]
@@ -22,12 +23,10 @@ interface ProgressSectionProps {
 export function ProgressSection({ attempts }: ProgressSectionProps) {
   if (attempts.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-12 text-center text-sm text-muted-foreground">
-          Belum ada data progres. Selesaikan simulasi pertama untuk melihat
-          grafik perkembangan skor.
-        </CardContent>
-      </Card>
+      <EmptyState 
+      title="Belum ada data progres. Selesaikan simulasi pertama untuk melihat
+          grafik perkembangan skor."
+      />
     )
   }
 

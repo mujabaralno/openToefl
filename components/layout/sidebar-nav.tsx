@@ -17,7 +17,7 @@ export function SidebarNav({ items, onNavigate }: SidebarNavProps) {
   const pathname = usePathname()
 
   return (
-    <nav aria-label="Navigasi utama" className="flex flex-col gap-0.5">
+    <nav aria-label="Navigasi utama" className="flex flex-col gap-2">
       {items.map((item) => {
         const isActive =
           pathname === item.href || pathname.startsWith(`${item.href}/`)
@@ -30,18 +30,15 @@ export function SidebarNav({ items, onNavigate }: SidebarNavProps) {
             onClick={onNavigate}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-              "text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground",
-              "focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none",
-              isActive && "bg-sidebar-accent text-sidebar-foreground"
+              "flex items-center gap-3 border-2 px-3 py-3 font-mono text-xs transition-colors",
+              "focus-visible:outline-3 focus-visible:outline-solid focus-visible:outline-offset-3 focus-visible:outline-sidebar-ring",
+              isActive
+                ? // Aktif: blok lime dengan border dan bayangan hitam keras
+                  "border-black bg-sidebar-primary font-bold text-sidebar-primary-foreground shadow-[2px_2px_0_var(--color-black)]"
+                : // Default + hover
+                  "border-transparent text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             )}
           >
-            {isActive && (
-              <span
-                aria-hidden="true"
-                className="absolute top-1/2 left-0 h-5 w-0.5 -translate-y-1/2 rounded-full bg-sidebar-primary"
-              />
-            )}
             <Icon className="size-4 shrink-0" aria-hidden="true" />
             <span>{item.title}</span>
           </Link>

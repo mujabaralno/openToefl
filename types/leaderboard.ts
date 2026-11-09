@@ -5,6 +5,7 @@
 export type LeaderboardPeriod = "all" | "month" | "week"
 
 export interface LeaderboardEntry {
+  fullName: string
   userId: string
   /** Full name, or "Anonim" when the user hid themselves. */
   displayName: string
